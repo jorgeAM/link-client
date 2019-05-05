@@ -1,10 +1,8 @@
 import React from 'react';
-import LinkList from './LinkList';
-import CreateLink from './CreateLink';
+import Header from './Header';
 
 function App() {
-  //return <LinkList />
-  return <CreateLink />
+  return <Header />
 }
 
 export default App;
