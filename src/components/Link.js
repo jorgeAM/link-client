@@ -1,5 +1,26 @@
 import React, { Component } from 'react';
+import { Mutation } from 'react-apollo'
+import gql from 'graphql-tag'
 import { AUTH_TOKEN } from "../constants/constants";
+
+const VOTE_MUTATION = gql`
+    mutation VoteMutation($linkId: ID!) {
+        vote(linkId: $linkId) {
+            id
+            link {
+                votes {
+                    id
+                    user {
+                        id
+                    }
+                }
+            }
+            user {
+                id
+            }
+        }
+    }
+`
 
 class Link extends Component {
     render() {
@@ -10,12 +31,24 @@ class Link extends Component {
                     <span className='gray'>{this.props.index + 1}</span>
                     {
                         authToken && (
-                            <div
-                                className='ml1 gray f11'
-                                onClick={() => this.voteForLink()}
+                            <Mutation
+                                mutation={VOTE_MUTATION}
+                                variables={{ linkId: this.props.link.id }}
+                                update={(store, { data: { vote }}) => 
+                                    this.props.updateStoreAfterVote(store, vote, this.props.link.id)
+                                }
                             >
-                                ▲
-                            </div>
+                                {
+                                    voteMutation => (
+                                        <div
+                                            className='ml1 gray f11 pointer'
+                                            onClick={voteMutation}
+                                        >
+                                            <span role='img' aria-label='like'>👍</span>
+                                        </div>
+                                    )
+                                }
+                            </Mutation>
                     )}
                 </div>
 
@@ -32,8 +65,6 @@ class Link extends Component {
             </div>
         )
     }
-
-    voteForLink = () => console.log('click')
 }
 
 export default Link;
