@@ -1,5 +1,23 @@
 import React, { Component } from 'react';
 import { AUTH_TOKEN } from '../constants/constants';
+import { Mutation } from 'react-apollo'
+import gql from 'graphql-tag'
+
+const SIGNUP_MUTATION = gql`
+    mutation SignupMutation($email: String!, $password: String!, $name: String!) {
+        signup(email: $email, password: $password, name: $name) {
+            token
+        }
+    }
+`
+
+const LOGIN_MUTATION = gql`
+    mutation LoginMutation($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
+            token
+        }
+    }
+`
 
 class Login extends Component {
     state = {
@@ -40,9 +58,19 @@ class Login extends Component {
                 </div>
 
                 <div className='flex mt3'>
-                    <div className='pointer mr2 button' onClick={() => this.confirm()}>
-                        {login ? 'login' : 'create account'}
-                    </div>
+                    <Mutation
+                        mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
+                        variables={{ email, password, name }}
+                        onCompleted={(data) => this.confirm(data)}
+                    >
+                        {
+                            mutation => (
+                                <div className='pointer mr2 button' onClick={mutation}>
+                                    {login ? 'login' : 'create account'}
+                                </div>
+                            )
+                        }
+                    </Mutation>
                     <div className='pinter button' onClick={() => this.setState({ login: !login })}>
                         {login ? 'need to create an account?' : 'already have an account?'}
                     </div>
@@ -51,8 +79,10 @@ class Login extends Component {
         )
     }
 
-    confirm = async () => {
-
+    confirm = async (data) => {
+        const { token } = this.state.login ? data.login : data.signup
+        this.saveUserData(token)
+        this.props.history.push(`/`)
     }
 
     saveUserData = token => localStorage.setItem(AUTH_TOKEN, token)
