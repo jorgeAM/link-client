@@ -9,6 +9,16 @@ const FEED_QUERY = gql`
         id
         url
         description
+        createdAt
+        postedBy{
+            name
+        }
+        votes{
+            id
+            user{
+                id
+            }
+        }
     }
 }
 `
@@ -20,7 +30,7 @@ class LinkList extends Component {
             {({ loading, error, data}) => {
                 if (loading) return <p>Loading ...</p>
                 if (error) return <p>Something get wrong :c</p>
-                return data.feed.map(link => <Link key={link.id} link={link} />)
+                return data.feed.map((link, index) => <Link key={link.id} link={link} index={index} />)
             }}
             </Query>
         )
