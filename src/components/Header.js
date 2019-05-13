@@ -4,6 +4,7 @@ import CreateLink from './CreateLink';
 import LinkList from './LinkList';
 import Login from './Login';
 import { AUTH_TOKEN } from '../constants/constants';
+import Search from './Search';
 
 class Header extends Component {
     render() {
@@ -14,6 +15,8 @@ class Header extends Component {
                     <div className='flex flex-fixed black'>
                         <div className='fw7 mr1'>Hacker News</div>
                         <Link to='/' className='ml1 no-underline black'>new</Link>
+                        <div className="ml1">|</div>
+                        <Link to='/search' className='ml1 no-underline black'>search</Link>
                         { authToken && (
                             <div className='flex'>
                                 <div className="ml1">|</div>
@@ -43,6 +46,7 @@ class Header extends Component {
                 <Route path='/' exact component={LinkList} />
                 <Route path='/create' component={CreateLink} />
                 <Route path='/login' component={Login} />
+                <Route path='/search' component={Search} />
             </Router>
         )
     }
